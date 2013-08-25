@@ -1,5 +1,9 @@
 # pog.coffee
-# 2013/08/25 - 
+# 2013/08/25 -
+# 
+navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia
+window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL
+window.AudioContext = window.AudioContext || window.webkitAudioContext || window.mozAudioContext || window.msAudioContext
 
 class Pog
     constructor: (ctx, stream_length) ->
@@ -74,21 +78,31 @@ class BufferLoader
 
 $(()->
 
-    ctx = new webkitAudioContext()
+    # ctx = new webkitAudioContext()
+    ctx = new AudioContext()
     pog = new Pog(ctx, 1024)
 
     pog.node.onaudioprocess = ((e) -> pog.play(e))
 
-    loader = new BufferLoader(ctx, "test.mp3", (
-        (buffer) ->
-            mp3 = ctx.createBufferSource()
-            mp3.buffer = buffer
-            mp3.loop = true;
-            mp3.connect(pog.node)
-            mp3.noteOn(0)
-    ))
-    loader.load()
-    pog.connect(ctx.destination)
+    # loader = new BufferLoader(ctx, "test.mp3", (
+    #     (buffer) ->
+    #         mp3 = ctx.createBufferSource()
+    #         mp3.buffer = buffer
+    #         mp3.loop = true;
+    #         mp3.connect(pog.node)
+    #         mp3.noteOn(0)
+    # ))
+    # loader.load()
+
+
+    navigator.getUserMedia(
+        {audio: true},
+        ((stream) ->
+            microphone = ctx.createMediaStreamSource(stream)
+            microphone.connect(pog.node)
+            pog.connect(ctx.destination)
+        )
+    );
 
     $(".vol").change(
         () ->
@@ -96,8 +110,7 @@ $(()->
     )
 
     $("#toggle").click(
-        () ->
-            $(this).val(pog.toggle())
+        () -> $(this).val(pog.toggle())
     )
 
     $(".vol").change()

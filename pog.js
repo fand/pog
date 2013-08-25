@@ -2,6 +2,12 @@
 (function() {
   var BufferLoader, Pog;
 
+  navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+
+  window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
+
+  window.AudioContext = window.AudioContext || window.webkitAudioContext || window.mozAudioContext || window.msAudioContext;
+
   Pog = (function() {
     function Pog(ctx, stream_length) {
       this.node = ctx.createScriptProcessor(stream_length, 1, 1);
@@ -108,22 +114,20 @@
   })();
 
   $(function() {
-    var ctx, loader, pog;
-    ctx = new webkitAudioContext();
+    var ctx, pog;
+    ctx = new AudioContext();
     pog = new Pog(ctx, 1024);
     pog.node.onaudioprocess = (function(e) {
       return pog.play(e);
     });
-    loader = new BufferLoader(ctx, "test.mp3", (function(buffer) {
-      var mp3;
-      mp3 = ctx.createBufferSource();
-      mp3.buffer = buffer;
-      mp3.loop = true;
-      mp3.connect(pog.node);
-      return mp3.noteOn(0);
+    navigator.getUserMedia({
+      audio: true
+    }, (function(stream) {
+      var microphone;
+      microphone = ctx.createMediaStreamSource(stream);
+      microphone.connect(pog.node);
+      return pog.connect(ctx.destination);
     }));
-    loader.load();
-    pog.connect(ctx.destination);
     $(".vol").change(function() {
       return pog.setGain($(this).attr("id"), $(this).val() / 100);
     });
