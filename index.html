@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8"/>
+    <title>pog</title>
+  </head>
+  <body>
+    <div id="wrapper"></div>
+
+    <fieldset id="octave">
+      <legend>OCTAVE</legend>
+      -2oct <input id="x_2" class="vol" type="range" min="0" max="100" value="0"><br>
+      -1oct <input id="x_1" class="vol" type="range" min="0" max="100" value="10"><br>
+      raw <input id="x1" class="vol" type="range" min="0" max="100" value="100"><br>
+      +1oct <input id="x2" class="vol" type="range" min="0" max="100" value="10"><br>
+      +1oct 5th <input id="x3" class="vol" type="range" min="0" max="100" value="30"><br>
+      +2oct <input id="x4" class="vol" type="range" min="0" max="100" value="70"><br>
+      +2oct 3rd <input id="x5" class="vol" type="range" min="0" max="100" value="60"><br>
+      <br>
+      <input id="toggle" type="button" value="bypass">
+    </fieldset>
+
+    <script src="jquery.min.js"></script>
+    <script src="pog.js"></script>    
+  </body>
+</html>
